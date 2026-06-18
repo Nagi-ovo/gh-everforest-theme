@@ -1,14 +1,25 @@
 # Everforest for GitHub
 
-A Chrome/Edge extension that restyles **github.com** with the warm, low-contrast
-[Everforest](https://github.com/sainnhe/everforest) palette — light & dark, with
-soft / medium / hard contrast. Built to be comprehensive and easy on the eyes:
-code, diffs, issues, pull requests, settings and the rest of the UI are all
-themed coherently, not just the page background.
-
 <p align="center">
-  <img src="icons/icon-128.png" width="84" alt="Everforest for GitHub icon" />
+  <img src="demo/preview.svg" alt="Everforest for GitHub — dark and light preview" width="860" />
 </p>
+
+A two-piece Everforest suite for your browser:
+
+1. **A Chrome/Edge extension** that restyles **github.com** with the warm,
+   low-contrast [Everforest](https://github.com/sainnhe/everforest) palette —
+   code, diffs, issues, pull requests, settings and the rest of the UI, all
+   themed coherently (not just the page background), in light & dark with
+   soft / medium / hard contrast.
+2. **Matching browser themes** that recolor the **Chrome UI itself** — tabs,
+   toolbar, address bar, new-tab — from the same palette, so your *whole
+   window* is Everforest, not just the page.
+
+Both are generated from one source palette and stay in lockstep. Install the
+extension, the browser theme, or both.
+
+> 🖥️ **Try it live:** open [`demo/index.html`](demo/index.html) for an interactive
+> light / dark / contrast preview (mock UI — no real GitHub data).
 
 ## Features
 
@@ -55,14 +66,19 @@ chrome around the page is Everforest too, not just GitHub.
 > package, and only one theme can be active at a time — so these are separate,
 > and you pick light **or** dark.
 
-Load one the same way (**Load unpacked**):
+Load one the same way — **Load unpacked** in `chrome://extensions`:
 
 - Dark:  `chrome-themes/everforest-dark`
 - Light: `chrome-themes/everforest-light`
 
-They're generated from the same `palette.ts`, so the browser UI and the
-github.com restyle stay in lockstep. To revert, remove the theme from
-`chrome://extensions` (or set Chrome back to its default/classic theme).
+> **Heads-up:** a browser theme applies *immediately* but does **not** appear as
+> a card on the `chrome://extensions` page — only the GitHub extension does, because
+> a theme isn't an "extension". Manage or remove it under **Settings → Appearance**
+> (`chrome://settings/appearance`) → **Reset to default**. Only one theme can be
+> active at a time; loading the other variant replaces it.
+
+Both are generated from the same `palette.ts`, so the browser UI and the
+github.com restyle stay in lockstep.
 
 ## Usage
 
@@ -119,11 +135,26 @@ scripts/        dev-only helpers (local server, single-mode CSS dump)
 The palette and token mapping are pure data + a small generator, so tweaking a
 color is a one-line edit in `palette.ts` or `mapping.ts` followed by a rebuild.
 
-## Credits
+## Acknowledgements
 
-- Palette: [sainnhe/everforest](https://github.com/sainnhe/everforest) by Sainnhe Park.
-- Not affiliated with GitHub or the Everforest project.
+This extension is a tribute to **[Everforest](https://github.com/sainnhe/everforest)** —
+the comfortable, green-based color scheme by **[Sainnhe Park (@sainnhe)](https://github.com/sainnhe)**,
+designed to be gentle on the eyes. Everforest *is* the heart of this project: every
+color here comes from its carefully tuned palette, and all the credit for how calm
+and readable this theme feels belongs to that work.
+
+If you like what you see, please go **★ star
+[sainnhe/everforest](https://github.com/sainnhe/everforest)** and explore the
+originals for Vim/Neovim, Alacritty, tmux, GTK and many more. 🌲
+
+Everforest is distributed under the MIT License; its palette is reused here with gratitude.
+
+## Trademarks
+
+This is an independent, open-source theme — **not affiliated with, endorsed by, or
+sponsored by GitHub, Inc.** “GitHub” is a trademark of GitHub, Inc., used here only
+to describe what the extension themes.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Everforest for GitHub — Preview</title>
+    <style>
+      /* Palette vars are injected by apply() in JS, mirroring the extension. */
+      :root {
+        --radius: 6px;
+        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; font-family: var(--sans); font-size: 14px; line-height: 1.5;
+        background: var(--bg-dim); color: var(--fg);
+        -webkit-font-smoothing: antialiased; transition: background .2s, color .2s;
+      }
+      a { color: var(--blue); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ── Demo toolbar ─────────────────────────────────────────── */
+      .controls {
+        position: sticky; top: 0; z-index: 10;
+        display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        padding: 12px 20px; background: var(--bg0);
+        border-bottom: 1px solid var(--bg4);
+      }
+      .brand { display: flex; align-items: center; gap: 9px; font-weight: 650; margin-right: auto; }
+      .brand svg { color: var(--green); }
+      .brand small { font-weight: 400; color: var(--grey1); }
+      .seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 8px;
+             background: var(--bg-dim); border: 1px solid var(--bg4); }
+      .seg button {
+        appearance: none; border: 0; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 550;
+        padding: 5px 11px; border-radius: 5px; color: var(--fg); background: transparent; transition: .12s;
+      }
+      .seg button[aria-pressed="true"] { background: var(--green); color: var(--on-emph); }
+      .seg-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--grey1); margin-right: -8px; }
+
+      /* ── GitHub mock frame ────────────────────────────────────── */
+      .gh { max-width: 1000px; margin: 22px auto; padding: 0 20px 60px; }
+      .ghbar {
+        display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+        background: var(--bg-dim); border: 1px solid var(--bg4); border-radius: var(--radius); margin-bottom: 18px;
+      }
+      .ghbar .mark { color: var(--fg); }
+      .ghbar .search {
+        flex: 1; max-width: 360px; padding: 5px 10px; border-radius: var(--radius);
+        background: var(--bg0); border: 1px solid var(--bg4); color: var(--grey1); font-size: 12.5px;
+      }
+      .ghbar .dot { width: 22px; height: 22px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--green), var(--aqua)); margin-left: auto; }
+
+      .repohead { display: flex; align-items: baseline; gap: 8px; font-size: 19px; margin-bottom: 10px; }
+      .repohead .owner { color: var(--blue); }
+      .repohead .slash { color: var(--grey1); }
+      .repohead .name { color: var(--blue); font-weight: 650; }
+      .repohead .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px;
+        border: 1px solid var(--bg4); color: var(--grey1); align-self: center; }
+
+      .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--bg4); margin-bottom: 18px; }
+      .tabs .tab { padding: 8px 12px; font-size: 13.5px; color: var(--fg); border-bottom: 2px solid transparent; cursor: pointer; }
+      .tabs .tab .c { color: var(--grey1); font-size: 12px; }
+      .tabs .tab.active { border-bottom-color: var(--orange); font-weight: 600; }
+      .tabs .tab:not(.active) { color: var(--grey1); }
+
+      .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+      .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 12.5px;
+        background: var(--bg1); border: 1px solid var(--bg4); border-radius: var(--radius); color: var(--fg); }
+      .btn { appearance: none; border: 1px solid var(--bg4); cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 550;
+        padding: 6px 12px; border-radius: var(--radius); background: var(--bg1); color: var(--fg); }
+      .btn.primary { background: var(--green); border-color: transparent; color: var(--on-emph); }
+      .btn.danger { color: var(--red); }
+      .spacer { margin-left: auto; }
+
+      .card { background: var(--bg0); border: 1px solid var(--bg4); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; }
+      .card .head { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--bg-dim);
+        border-bottom: 1px solid var(--bg4); font-size: 13px; }
+      .card .head .meta { margin-left: auto; color: var(--grey1); font-size: 12px; }
+
+      /* code */
+      pre.code { margin: 0; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; overflow-x: auto; }
+      pre.code .ln { display: block; padding: 0 16px; }
+      pre.code .gutter { display: inline-block; width: 30px; margin-right: 14px; text-align: right;
+        color: var(--grey1); opacity: .65; user-select: none; }
+      .kw { color: var(--red); } .str { color: var(--aqua); } .fn { color: var(--green); }
+      .cm { color: var(--grey1); } .num { color: var(--purple); } .var { color: var(--orange); } .ty { color: var(--yellow); }
+
+      /* diff */
+      .diff { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; }
+      .diff .row { display: flex; }
+      .diff .sign { width: 26px; text-align: center; color: var(--grey1); user-select: none; }
+      .diff .txt { flex: 1; padding-right: 12px; white-space: pre; }
+      .diff .add { background: var(--bg-green); }
+      .diff .del { background: var(--bg-red); }
+
+      /* issues */
+      .issue { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--bg4); }
+      .issue:last-child { border-bottom: 0; }
+      .issue .ico { color: var(--green); margin-top: 2px; }
+      .issue .body { flex: 1; }
+      .issue .title { font-weight: 600; }
+      .issue .sub { color: var(--grey1); font-size: 12px; margin-top: 2px; }
+      .label { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; margin-left: 6px; }
+      .badge-open { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+        padding: 3px 10px; border-radius: 999px; background: var(--green); color: var(--on-emph); }
+
+      .swatches { display: flex; gap: 6px; margin-top: 6px; }
+      .swatches i { width: 26px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid rgba(127,127,127,.25); }
+      .foot { text-align: center; color: var(--grey1); font-size: 12px; margin-top: 26px; }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <span class="brand">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6.05 8.05c-2.73 2.73-2.73 7.15-.02 9.88 1.47-3.4 4.09-6.24 7.36-7.93-2.77 2.34-4.71 5.61-5.39 9.32 2.6 1.23 5.8.78 7.95-1.37C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05z"/></svg>
+        Everforest for GitHub <small>· live preview</small>
+      </span>
+      <span class="seg-label">Theme</span>
+      <div class="seg" id="theme">
+        <button data-v="light">Light</button>
+        <button data-v="dark">Dark</button>
+      </div>
+      <span class="seg-label">Contrast</span>
+      <div class="seg" id="contrast">
+        <button data-v="soft">Soft</button>
+        <button data-v="medium">Medium</button>
+        <button data-v="hard">Hard</button>
+      </div>
+    </div>
+
+    <div class="gh">
+      <!-- global bar -->
+      <div class="ghbar">
+        <svg class="mark" viewBox="0 0 16 16" width="26" height="26"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <input class="search" value="Type / to search" readonly />
+        <span class="dot"></span>
+      </div>
+
+      <!-- repo header -->
+      <div class="repohead">
+        <span class="owner">nagi-ovo</span><span class="slash">/</span><span class="name">everforest-demo</span>
+        <span class="badge">Public</span>
+      </div>
+      <div class="tabs">
+        <span class="tab active">Code</span>
+        <span class="tab">Issues <span class="c">12</span></span>
+        <span class="tab">Pull requests <span class="c">3</span></span>
+        <span class="tab">Actions</span>
+        <span class="tab">Settings</span>
+      </div>
+      <div class="toolbar">
+        <span class="pill">⎇ main</span>
+        <span class="pill">42 Branches</span>
+        <span class="spacer"></span>
+        <button class="btn">Add file ▾</button>
+        <button class="btn primary">◇ Code ▾</button>
+      </div>
+
+      <!-- code card -->
+      <div class="card">
+        <div class="head">📄 theme.ts <span class="meta">128 lines · 4.2 KB</span></div>
+        <pre class="code"><span class="ln"><span class="gutter">1</span><span class="cm">// Resolve an Everforest token set for a (mode, contrast).</span></span><span class="ln"><span class="gutter">2</span><span class="kw">import</span> { everforest } <span class="kw">from</span> <span class="str">"./palette"</span>;</span><span class="ln"><span class="gutter">3</span></span><span class="ln"><span class="gutter">4</span><span class="kw">export</span> <span class="kw">function</span> <span class="fn">resolve</span>(mode: <span class="ty">Mode</span>, contrast: <span class="ty">Contrast</span>) {</span><span class="ln"><span class="gutter">5</span>  <span class="kw">const</span> <span class="var">p</span> = everforest[mode];</span><span class="ln"><span class="gutter">6</span>  <span class="kw">const</span> <span class="var">levels</span> = <span class="num">3</span>; <span class="cm">// soft · medium · hard</span></span><span class="ln"><span class="gutter">7</span>  <span class="kw">return</span> { ...<span class="var">p</span>, ...<span class="var">p</span>.bg[contrast] };</span><span class="ln"><span class="gutter">8</span>}</span></pre>
+      </div>
+
+      <!-- diff card -->
+      <div class="card">
+        <div class="head">🔀 mapping.ts <span class="meta">+3 −1</span></div>
+        <div class="diff">
+          <div class="row"><span class="sign">&nbsp;</span><span class="txt">  t["--bgColor-default"] = bg0;</span></div>
+          <div class="row del"><span class="sign">−</span><span class="txt">  t["--fgColor-accent"] = "#0969da";</span></div>
+          <div class="row add"><span class="sign">+</span><span class="txt">  t["--fgColor-accent"] = blue;        // Everforest</span></div>
+          <div class="row add"><span class="sign">+</span><span class="txt">  t["--fgColor-link"]   = blue;</span></div>
+          <div class="row add"><span class="sign">+</span><span class="txt">  t["--borderColor-default"] = bg4;</span></div>
+          <div class="row"><span class="sign">&nbsp;</span><span class="txt">  return t;</span></div>
+        </div>
+      </div>
+
+      <!-- issues card -->
+      <div class="card">
+        <div class="head"><span class="badge-open">● 12 Open</span> <span class="meta">3 closed</span></div>
+        <div class="issue">
+          <span class="ico">◉</span>
+          <div class="body">
+            <div class="title">Soft contrast looks washed out on the diff gutter
+              <span class="label" style="background:var(--red);color:var(--on-emph)">bug</span>
+              <span class="label" style="background:var(--purple);color:var(--on-emph)">ui</span>
+            </div>
+            <div class="sub">#42 opened 3 hours ago by nagi-ovo</div>
+          </div>
+        </div>
+        <div class="issue">
+          <span class="ico">◉</span>
+          <div class="body">
+            <div class="title">Add a “follow system” option to the popup
+              <span class="label" style="background:var(--green);color:var(--on-emph)">enhancement</span>
+              <span class="label" style="background:var(--aqua);color:var(--on-emph)">good first issue</span>
+            </div>
+            <div class="sub">#39 opened yesterday by octocat</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons + palette -->
+      <div class="toolbar">
+        <button class="btn primary">Merge pull request</button>
+        <button class="btn">Review changes</button>
+        <button class="btn danger">Close</button>
+        <span class="spacer"></span>
+        <div class="swatches" id="swatches"></div>
+      </div>
+
+      <div class="foot">Mock UI · the colors are the live Everforest theme · no real GitHub data</div>
+    </div>
+
+    <script>
+      const PAL = {
+        dark: {
+          bg: {
+            hard:   { bg_dim:'#1e2326', bg0:'#272e33', bg1:'#2e383c', bg2:'#374145', bg3:'#414b50', bg4:'#495156' },
+            medium: { bg_dim:'#232a2e', bg0:'#2d353b', bg1:'#343f44', bg2:'#3d484d', bg3:'#475258', bg4:'#4f585e' },
+            soft:   { bg_dim:'#293136', bg0:'#333c43', bg1:'#3a464c', bg2:'#434f55', bg3:'#4d5960', bg4:'#555f66' },
+          },
+          fg:'#d3c6aa', grey1:'#859289', red:'#e67e80', orange:'#e69875', yellow:'#dbbc7f',
+          green:'#a7c080', aqua:'#83c092', blue:'#7fbbb3', purple:'#d699b6',
+          bg_red:'#514045', bg_green:'#425047', on_emph:'#232a2e',
+        },
+        light: {
+          bg: {
+            hard:   { bg_dim:'#f2efdf', bg0:'#fffbef', bg1:'#f8f5e4', bg2:'#f2efdf', bg3:'#edeada', bg4:'#e8e5d5' },
+            medium: { bg_dim:'#efebd4', bg0:'#fdf6e3', bg1:'#f4f0d9', bg2:'#efebd4', bg3:'#e6e2cc', bg4:'#e0dcc7' },
+            soft:   { bg_dim:'#e5dfc5', bg0:'#f3ead3', bg1:'#eae4ca', bg2:'#e5dfc5', bg3:'#ddd8be', bg4:'#d8d3ba' },
+          },
+          fg:'#5c6a72', grey1:'#939f91', red:'#f85552', orange:'#f57d26', yellow:'#dfa000',
+          green:'#8da101', aqua:'#35a77c', blue:'#3a94c5', purple:'#df69ba',
+          bg_red:'#fde3da', bg_green:'#f0f1d2', on_emph:'#fffbef',
+        },
+      };
+      const state = { theme: 'dark', contrast: 'medium' };
+      const r = document.documentElement;
+      function apply() {
+        const p = PAL[state.theme], b = p.bg[state.contrast];
+        Object.entries(b).forEach(([k, v]) => r.style.setProperty('--' + k.replace('_', '-'), v));
+        ['fg','grey1','red','orange','yellow','green','aqua','blue','purple','bg_red','bg_green','on_emph']
+          .forEach(k => r.style.setProperty('--' + k.replace('_', '-'), p[k]));
+        r.dataset.theme = state.theme;
+        r.style.colorScheme = state.theme;
+        for (const grp of ['theme', 'contrast'])
+          document.querySelectorAll('#' + grp + ' button').forEach(btn =>
+            btn.setAttribute('aria-pressed', String(btn.dataset.v === state[grp])));
+        const sw = document.getElementById('swatches');
+        sw.innerHTML = '';
+        ['red','orange','yellow','green','aqua','blue','purple'].forEach(k => {
+          const i = document.createElement('i'); i.style.background = p[k]; sw.appendChild(i);
+        });
+      }
+      document.getElementById('theme').addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b) return; state.theme = b.dataset.v; apply();
+      });
+      document.getElementById('contrast').addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b) return; state.contrast = b.dataset.v; apply();
+      });
+      apply();
+    </script>
+  </body>
+</html>

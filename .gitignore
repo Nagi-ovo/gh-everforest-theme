@@ -2,3 +2,6 @@ node_modules/
 dist/
 *.zip
 .DS_Store
+
+# Chrome compiles this into a theme folder when you load it unpacked
+Cached Theme.pak
