@@ -84,6 +84,11 @@ html:not([data-ef="off"]) #search a:visited, html:not([data-ef="off"]) #search a
 html:not([data-ef="off"]) #search a:visited span,
 html:not([data-ef="off"]) #rso a:visited, html:not([data-ef="off"]) #rso a:visited h3,
 html:not([data-ef="off"]) #rso a:visited span { color: var(--ef-purple) !important; }
+/* Anchors in rich panels (AI Overview citations, knowledge panel, "People also
+   ask") sit under #rcnt but outside #search/#rso/#rhs, so the broad #rcnt text
+   rule above strips their link colour — restore the blue / visited purple. */
+html:not([data-ef="off"]) #rcnt a, html:not([data-ef="off"]) #rcnt a span { color: var(--ef-blue) !important; }
+html:not([data-ef="off"]) #rcnt a:visited, html:not([data-ef="off"]) #rcnt a:visited span { color: var(--ef-purple) !important; }
 
 /* url (cite), snippet body, bold matches */
 html:not([data-ef="off"]) cite, html:not([data-ef="off"]) #search cite { color: var(--ef-green) !important; }

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Komorebi",
-  "version": "0.7.2",
-  "description": "A calm Everforest theme for the web — AI chats, mail, GitHub, Google, Drive, Docs, YouTube, Bilibili & more. Light & dark.",
+  "version": "0.7.3",
+  "description": "A calm Everforest color theme for the web, in matching light and dark — softer, consistent colors that are easier on the eyes.",
   "author": "Jesse Zhang",
   "homepage_url": "https://github.com/Nagi-ovo/komorebi",
   "icons": {

@@ -3,3 +3,6 @@ dist/
 chrome-themes/
 *.zip
 .DS_Store
+
+# local-only Claude Code skills (e.g. the release runbook) — not shared
+.claude/skills/

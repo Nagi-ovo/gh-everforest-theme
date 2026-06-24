@@ -39,7 +39,7 @@ const SHADOW_CSS =
   ".tag{background:var(--bg2)!important;color:var(--text3)!important;" +
   "border-color:var(--line_regular)!important;}";
 
-const observedRoots = new WeakSet<ShadowRoot>();
+const rootObservers = new Map<ShadowRoot, MutationObserver>();
 let active = false;
 let scanQueued = false;
 let docObserver: MutationObserver | null = null;
@@ -59,11 +59,13 @@ function scan(node: Document | ShadowRoot): void {
     const sr = el.shadowRoot;
     if (!sr) return;
     injectInto(sr);
-    if (!observedRoots.has(sr)) {
-      observedRoots.add(sr);
+    if (!rootObservers.has(sr)) {
       // mutations don't cross a shadow boundary, so each root needs its own
-      // observer to notice new comments appended inside it.
-      new MutationObserver(queueScan).observe(sr, { childList: true, subtree: true });
+      // observer to notice new comments appended inside it. Tracked in a map so
+      // they can all be disconnected when the theme is switched off.
+      const mo = new MutationObserver(queueScan);
+      mo.observe(sr, { childList: true, subtree: true });
+      rootObservers.set(sr, mo);
     }
     scan(sr);
   });
@@ -99,6 +101,8 @@ function syncBiliShadows(on: boolean): void {
     active = false;
     docObserver?.disconnect();
     docObserver = null;
+    rootObservers.forEach((mo) => mo.disconnect());
+    rootObservers.clear();
     removeAll(document);
   }
 }
