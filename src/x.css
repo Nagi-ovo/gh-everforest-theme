@@ -109,6 +109,14 @@ html:not([data-ef="off"]) [data-testid="tweet"] [data-testid="User-Name"] a[href
   color: var(--ef-fg) !important;
 }
 
+/* profile bio (UserDescription): @mentions / #hashtags / links are accent-coloured
+   on native X, but the text-flatten greys the @mention (URLs already match the
+   //-link rule). Blue every link in the bio. */
+html:not([data-ef="off"]) [data-testid="UserDescription"] a,
+html:not([data-ef="off"]) [data-testid="UserDescription"] a span {
+  color: var(--ef-blue) !important;
+}
+
 /* primary buttons → Everforest green pill (scoped for specificity over the paint) */
 html:not([data-ef="off"]) [data-testid="sidebarColumn"] :is([data-testid="follow"], [data-testid$="-follow"]:not([data-testid$="unfollow"])),
 html:not([data-ef="off"]) [data-testid="primaryColumn"] :is([data-testid="follow"], [data-testid$="-follow"]:not([data-testid$="unfollow"])),
