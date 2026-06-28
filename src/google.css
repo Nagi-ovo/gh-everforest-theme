@@ -24,30 +24,35 @@ html:not([data-ef="off"])[data-ef-mode="dark"] {
   }
 }
 
-/* page + known Google chrome surfaces; do not blanket #rcnt or image grids vanish */
-html:not([data-ef="off"]) body { background: var(--ef-bg) !important; color: var(--ef-fg) !important; }
+/* page + known Google chrome surfaces; do not blanket #rcnt or image grids vanish.
+   Use background-color only: Google image thumbnails may be background-image
+   layers, and the background shorthand erases those images. */
+html:not([data-ef="off"]) body { background-color: var(--ef-bg) !important; color: var(--ef-fg) !important; }
 html:not([data-ef="off"]) #searchform,
 html:not([data-ef="off"]) #search,
-html:not([data-ef="off"]) #rso,
-html:not([data-ef="off"]) #rso > div,
-html:not([data-ef="off"]) #rso > div > div,
-html:not([data-ef="off"]) #rso > div > div > div,
 html:not([data-ef="off"]) footer,
 html:not([data-ef="off"]) #fbar,
 html:not([data-ef="off"]) #searchform div:has([role="listbox"]),
 html:not([data-ef="off"]) #searchform [role="listbox"],
 html:not([data-ef="off"]) #searchform [role="option"],
 html:not([data-ef="off"]) .RDmXvc,
-html:not([data-ef="off"]) .RNNXgb { background: var(--ef-bg) !important; }
+html:not([data-ef="off"]) .RNNXgb { background-color: var(--ef-bg) !important; }
 html:not([data-ef="off"]) #appbar div,
 html:not([data-ef="off"]) #rhs div { background-color: var(--ef-bg) !important; }
+html:not([data-ef="off"])[data-ef-google-images] #rso,
+html:not([data-ef="off"]):not([data-ef-google-images]) #rso,
+html:not([data-ef="off"]):not([data-ef-google-images]) #rso > div,
+html:not([data-ef="off"]):not([data-ef-google-images]) #rso > div > div,
+html:not([data-ef="off"]):not([data-ef-google-images]) #rso > div > div > div {
+  background-color: var(--ef-bg) !important;
+}
 
 /* Newer Google result/ad "cards" (incl. the white "Sponsored results" unit) use
    surfaces nested deeper than the #rso > div > div > div levels above. Flatten
    them via the stable results/ad container ids so this survives Google's hashed
    class churn. background-color (not the background shorthand) keeps favicons and
    thumbnails intact, the way the #appbar/#rhs rule above does. */
-html:not([data-ef="off"]) :is(#rso, #tads, #tadsb, #tvcap, #bottomads) div {
+html:not([data-ef="off"]):not([data-ef-google-images]) :is(#rso, #tads, #tadsb, #tvcap, #bottomads) div {
   background-color: var(--ef-bg) !important;
 }
 

@@ -19,7 +19,15 @@ import { loadSettings, onSettingsChanged, siteForHost, type Settings } from "./s
 const root = document.documentElement;
 const site = siteForHost(location.hostname);
 
+function syncGooglePageKind(): void {
+  if (site !== "google") return;
+  const params = new URLSearchParams(location.search);
+  root.toggleAttribute("data-ef-google-images", params.get("udm") === "2" || params.get("tbm") === "isch");
+}
+
 function apply(s: Settings): void {
+  syncGooglePageKind();
+
   const on = s.enabled && (site ? s.sites[site] !== false : true);
   if (on) root.removeAttribute("data-ef");
   else root.setAttribute("data-ef", "off");
